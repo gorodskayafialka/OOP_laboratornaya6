@@ -2,7 +2,16 @@ package lab6;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import lab6.from_lab2.Circle;
 import lab6.from_lab2.Shape;
+import lab6.from_lab2.FileWorker;
 import lab6.Dialogs.*;
 
 public class MainFrame extends JFrame {
@@ -14,6 +23,7 @@ public class MainFrame extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         DefaultListModel<Shape> listModel = new DefaultListModel<>();
+        FileWorker fileWorker = new FileWorker();
         JList<Shape> list = new JList<>(listModel);
         JButton moveDownBtn = new JButton("Move Down");
         JButton moveUpBtn = new JButton("Move Up");
@@ -95,16 +105,41 @@ public class MainFrame extends JFrame {
             removeBtn.setEnabled(list.getSelectedIndex() != -1);
             moveDownBtn.setEnabled((list.getSelectedIndex() != -1) && (list.getSelectedIndex() != listModel.getSize()-1));
             moveUpBtn.setEnabled((list.getSelectedIndex() != -1) && (list.getSelectedIndex() != 0));
-      });
+        });
         moveDownBtn.setEnabled(false);
         moveUpBtn.setEnabled(false);
         removeBtn.setEnabled(false);
-
+        ArrayList<Shape> temp = new ArrayList<>();
+        try {
+            temp = fileWorker.readList("C:\\Users\\Ксения Лучкова\\IdeaProjects\\Graphic_interface\\data.dat");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        for (Shape current: temp) {
+            listModel.addElement(current);
+        }
         mainPanel.add (listTitle, BorderLayout.NORTH);
         mainPanel.add(list, BorderLayout.CENTER);
         mainPanel.add(buttonsPanel, BorderLayout.EAST);
 
 
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                ArrayList<Shape> temp = new ArrayList<>();
+                for (int i = 0; i < listModel.getSize(); i++) {
+                    temp.add(listModel.getElementAt(i));
+                }
+                try {
+                    fileWorker.writeList(temp,"C:\\Users\\Ксения Лучкова\\IdeaProjects\\Graphic_interface\\data.dat");
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                System.exit(0);
+            }
+        });
         setContentPane(mainPanel);
     }
 }

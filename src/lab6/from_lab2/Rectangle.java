@@ -1,6 +1,8 @@
 package lab6.from_lab2;
 
-public class Rectangle implements Shape {
+import java.io.Serializable;
+
+public class Rectangle implements Shape, Serializable {
     private double A, B;
 
     public Rectangle(double A, double B) throws IllegalArgumentException {

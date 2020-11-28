@@ -1,6 +1,8 @@
 package lab6.from_lab2;
 
-public class Triangle implements Shape {
+import java.io.Serializable;
+
+public class Triangle implements Shape, Serializable {
     private double A, B, C;
 
     public Triangle(double A, double B, double C) throws IllegalArgumentException {

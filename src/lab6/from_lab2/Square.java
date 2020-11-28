@@ -1,6 +1,8 @@
 package lab6.from_lab2;
 
-public class Square implements Shape
+import java.io.Serializable;
+
+public class Square implements Shape, Serializable
 {
     private double A;
 

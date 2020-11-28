@@ -1,6 +1,8 @@
 package lab6.from_lab2;
 
-public class Circle implements Shape {
+import java.io.Serializable;
+
+public class Circle implements Shape, Serializable {
     private double Radius;
 
     public Circle(double Radius) throws IllegalArgumentException {
