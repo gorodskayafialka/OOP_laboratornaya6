@@ -4,12 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-
-import lab6.from_lab2.Circle;
 import lab6.from_lab2.Shape;
 import lab6.from_lab2.FileWorker;
 import lab6.Dialogs.*;
@@ -113,9 +109,13 @@ public class MainFrame extends JFrame {
         try {
             temp = fileWorker.readList("C:\\Users\\Ксения Лучкова\\IdeaProjects\\Graphic_interface\\data.dat");
         } catch (IOException e) {
-            e.printStackTrace();
+            JDialog error = new JDialog();
+            JOptionPane.showMessageDialog(error,
+                    "Failed to recover the data", "Error", JOptionPane.WARNING_MESSAGE);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            JDialog error = new JDialog();
+            JOptionPane.showMessageDialog(error,
+                    "Failed to recover the data", "Error", JOptionPane.WARNING_MESSAGE);
         }
         for (Shape current: temp) {
             listModel.addElement(current);
@@ -135,7 +135,9 @@ public class MainFrame extends JFrame {
                 try {
                     fileWorker.writeList(temp,"C:\\Users\\Ксения Лучкова\\IdeaProjects\\Graphic_interface\\data.dat");
                 } catch (IOException ioException) {
-                    ioException.printStackTrace();
+                    JDialog error = new JDialog();
+                    JOptionPane.showMessageDialog(error,
+                            "Failed to save the data", "Error", JOptionPane.WARNING_MESSAGE);
                 }
                 System.exit(0);
             }
