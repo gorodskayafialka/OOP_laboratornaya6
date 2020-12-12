@@ -6,17 +6,17 @@ import java.util.ArrayList;
 
 public class FileWorker
 {
-  public  void writeList(ArrayList<Shape> shapes, String filename) throws IOException
+    public void writeList(ArrayList<Shape> shapes, String filename) throws IOException
     {
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(filename));
-        objectOutputStream.writeObject(shapes);
-        objectOutputStream.close();
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(filename))) {
+            objectOutputStream.writeObject(shapes);
+        }
     }
 
- public   ArrayList<Shape> readList(String filename) throws IOException, ClassNotFoundException {
-        ArrayList shapes = new ArrayList();
-        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(filename));
-        shapes = (ArrayList<Shape>)objectInputStream.readObject();
-        return shapes;
+    public ArrayList<Shape> readList(String filename) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(filename))){
+            ArrayList shapes = (ArrayList<Shape>) objectInputStream.readObject();
+            return shapes;
+        }
     }
 }

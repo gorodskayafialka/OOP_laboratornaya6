@@ -1,6 +1,8 @@
 package lab6;
 
 import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -12,14 +14,17 @@ import lab6.Dialogs.*;
 
 public class MainFrame extends JFrame {
 
+    private DefaultListModel<Shape> listModel;
+    private FileWorker fileWorker;
+
     public MainFrame() {
         setTitle("Shapes App");
         setSize(300, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        DefaultListModel<Shape> listModel = new DefaultListModel<>();
-        FileWorker fileWorker = new FileWorker();
+        listModel = new DefaultListModel<>();
+        fileWorker = new FileWorker();
         JList<Shape> list = new JList<>(listModel);
         JButton moveDownBtn = new JButton("Move Down");
         JButton moveUpBtn = new JButton("Move Up");
@@ -28,7 +33,6 @@ public class MainFrame extends JFrame {
         JButton createTriangleBtn = new JButton("Create Triangle");
         JButton createRectangleBtn = new JButton("Create Rectangle");
         JButton createSquareBtn = new JButton("Create Square");
-        createSquareBtn.setPreferredSize(createRectangleBtn.getPreferredSize());
         moveDownBtn.setMaximumSize(createRectangleBtn.getMinimumSize());
         moveUpBtn.setMaximumSize(createRectangleBtn.getMinimumSize());
         removeBtn.setMaximumSize(createRectangleBtn.getMinimumSize());
@@ -47,6 +51,10 @@ public class MainFrame extends JFrame {
         buttonsPanel.add(createTriangleBtn);
         buttonsPanel.add(createRectangleBtn);
         buttonsPanel.add(createSquareBtn);
+        mainPanel.add (listTitle, BorderLayout.NORTH);
+        mainPanel.add(list, BorderLayout.CENTER);
+        mainPanel.add(buttonsPanel, BorderLayout.EAST);
+        setContentPane(mainPanel);
 
         moveUpBtn.addActionListener(e -> {
             int selectedIndex = list.getSelectedIndex();
@@ -120,28 +128,37 @@ public class MainFrame extends JFrame {
         for (Shape current: temp) {
             listModel.addElement(current);
         }
-        mainPanel.add (listTitle, BorderLayout.NORTH);
-        mainPanel.add(list, BorderLayout.CENTER);
-        mainPanel.add(buttonsPanel, BorderLayout.EAST);
 
-
-        addWindowListener(new WindowAdapter() {
+        listModel.addListDataListener(new ListDataListener() {
             @Override
-            public void windowClosing(WindowEvent e) {
-                ArrayList<Shape> temp = new ArrayList<>();
-                for (int i = 0; i < listModel.getSize(); i++) {
-                    temp.add(listModel.getElementAt(i));
-                }
-                try {
-                    fileWorker.writeList(temp,"C:\\Users\\Ксения Лучкова\\IdeaProjects\\Graphic_interface\\data.dat");
-                } catch (IOException ioException) {
-                    JDialog error = new JDialog();
-                    JOptionPane.showMessageDialog(error,
-                            "Failed to save the data", "Error", JOptionPane.WARNING_MESSAGE);
-                }
-                System.exit(0);
+            public void intervalAdded(ListDataEvent e) {
+              saveList();
+            }
+
+            @Override
+            public void intervalRemoved(ListDataEvent e) {
+                saveList();
+            }
+
+            @Override
+            public void contentsChanged(ListDataEvent e) {
+               saveList();
             }
         });
-        setContentPane(mainPanel);
+    }
+
+    void saveList()
+    {
+        ArrayList<Shape> temp = new ArrayList<>();
+        for (int i = 0; i < listModel.getSize(); i++) {
+            temp.add(listModel.getElementAt(i));
+        }
+        try {
+            fileWorker.writeList(temp,"C:\\Users\\Ксения Лучкова\\IdeaProjects\\Graphic_interface\\data.dat");
+        } catch (IOException ioException) {
+            JDialog error = new JDialog();
+            JOptionPane.showMessageDialog(error,
+                    "Failed to save the data", "Error", JOptionPane.WARNING_MESSAGE);
+        }
     }
 }
